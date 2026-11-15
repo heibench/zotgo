@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/CameronBrooks11/zotgo/internal/output"
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/output"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // executeItemCopy creates one planned item and everything under it.

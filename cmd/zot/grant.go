@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 	cli "github.com/urfave/cli/v3"
 )
 

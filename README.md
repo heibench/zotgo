@@ -11,12 +11,12 @@ zotgo is the from-scratch successor to
 ## Install
 
 ```bash
-go install github.com/CameronBrooks11/zotgo/cmd/zot@latest
+go install github.com/heibench/zotgo/cmd/zot@latest
 ```
 
 Or grab a prebuilt binary from the [Releases] page — no runtime, no dependencies.
 
-[Releases]: https://github.com/CameronBrooks11/zotgo/releases
+[Releases]: https://github.com/heibench/zotgo/releases
 
 ## Quickstart
 
@@ -43,7 +43,7 @@ script-friendly output with `--json` / `--jsonl` / `--raw`.
 ## Documentation
 
 The docs are published as a site at
-**<https://cameronbrooks11.github.io/zotgo/>**, and the source lives in
+**<https://heibench.com/zotgo/>**, and the source lives in
 **[`docs/`](docs/README.md)**:
 
 - [Getting started](docs/getting-started.md) · [Reading](docs/reading.md) ·
@@ -52,7 +52,7 @@ The docs are published as a site at
   [Zotero API reference](docs/zotero-api.md)
 
 Released changes are in the [changelog](CHANGELOG.md); planned and outstanding
-work is tracked in [issues](https://github.com/CameronBrooks11/zotgo/issues).
+work is tracked in [issues](https://github.com/heibench/zotgo/issues).
 
 ## Development
 

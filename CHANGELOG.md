@@ -6,9 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Planned and outstanding work is tracked in the
-[issue tracker](https://github.com/CameronBrooks11/zotgo/issues), not here.
+[issue tracker](https://github.com/heibench/zotgo/issues), not here.
 
 ## [Unreleased]
+
+### Changed
+
+- **Breaking for `go install`.** zotgo moved to the heibench organization, so the
+  module path is now `github.com/heibench/zotgo`. Install with
+  `go install github.com/heibench/zotgo/cmd/zot@latest`. The old path gets no
+  further releases: `go install` against it installs an older release or fails
+  with a module-path mismatch. Release downloads and git URLs redirect, and the
+  documentation is now at <https://heibench.com/zotgo/>.
 
 ### Fixed
 
@@ -102,7 +111,7 @@ you set, whether or not anyone remembers to revoke it.
   second confirmation naming the concrete end date, and `zot grant status` marks
   the lease `LONG-LIVED` and shows the time it has left. Leases of 24h or less
   behave exactly as before, and the machine-output schema is unaffected.
-  ([#93](https://github.com/CameronBrooks11/zotgo/issues/93))
+  ([#93](https://github.com/heibench/zotgo/issues/93))
 
 ## [0.11.0] - 2026-08-23
 
@@ -380,16 +389,16 @@ contract before scripts could depend on it.
   `collections`, `stats`. Zero-dependency static binary and a goreleaser release
   pipeline.
 
-[Unreleased]: https://github.com/CameronBrooks11/zotgo/compare/v1.0.0-rc.1...HEAD
-[1.0.0-rc.1]: https://github.com/CameronBrooks11/zotgo/compare/v0.12.0...v1.0.0-rc.1
-[0.12.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.11.0...v0.12.0
-[0.11.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.10.0...v0.11.0
-[0.10.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.9.0...v0.10.0
-[0.9.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.8.0...v0.9.0
-[0.8.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.7.0...v0.8.0
-[0.7.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.6.0...v0.7.0
-[0.6.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.5.0...v0.6.0
-[0.5.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.3.0...v0.5.0
-[0.3.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/CameronBrooks11/zotgo/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/CameronBrooks11/zotgo/releases/tag/v0.1.0
+[Unreleased]: https://github.com/heibench/zotgo/compare/v1.0.0-rc.1...HEAD
+[1.0.0-rc.1]: https://github.com/heibench/zotgo/compare/v0.12.0...v1.0.0-rc.1
+[0.12.0]: https://github.com/heibench/zotgo/compare/v0.11.0...v0.12.0
+[0.11.0]: https://github.com/heibench/zotgo/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/heibench/zotgo/compare/v0.9.0...v0.10.0
+[0.9.0]: https://github.com/heibench/zotgo/compare/v0.8.0...v0.9.0
+[0.8.0]: https://github.com/heibench/zotgo/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/heibench/zotgo/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/heibench/zotgo/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/heibench/zotgo/compare/v0.3.0...v0.5.0
+[0.3.0]: https://github.com/heibench/zotgo/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/heibench/zotgo/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/heibench/zotgo/releases/tag/v0.1.0

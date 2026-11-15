@@ -19,7 +19,7 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 const testPDF = "%PDF-1.7\n1 0 obj\n<<>>\nendobj\n%%EOF\n"

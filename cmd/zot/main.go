@@ -16,7 +16,7 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // version is overridden at release time via -ldflags "-X main.version=...".

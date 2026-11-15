@@ -17,7 +17,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // TestLiveGrantedWriteRoundTrip proves the end-to-end lease path against real

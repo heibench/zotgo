@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // resolveCollectionKey turns a --collection selector (an exact key or an exact

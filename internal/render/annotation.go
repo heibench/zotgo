@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // Annotations writes compact annotation metadata without text or comments.

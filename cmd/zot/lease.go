@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // A write lease is how a human grants an agent bounded, time-boxed, audited write

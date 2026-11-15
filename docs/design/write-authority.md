@@ -388,7 +388,7 @@ The original ceiling was 24h. That is below the period of the very caller this
 document names first — a cron sync — so a recurring job failed closed at the same
 time every day, and recovery needed a human at a terminal to approve Zotero's
 modal. `zot grant` requires a TTY by design, so there was no way to close that
-gap from the automation side. Raised in [#93](https://github.com/CameronBrooks11/zotgo/issues/93),
+gap from the automation side. Raised in [#93](https://github.com/heibench/zotgo/issues/93),
 which asked for an **"until revoked"** lease.
 
 The ceiling is raised to **30 days**; an unexpiring lease is still refused. The

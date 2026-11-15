@@ -6,7 +6,7 @@ src = "docs"
 language = "en"
 
 [output.html]
-git-repository-url = "https://github.com/CameronBrooks11/zotgo"
-edit-url-template = "https://github.com/CameronBrooks11/zotgo/edit/main/{path}"
+git-repository-url = "https://github.com/heibench/zotgo"
+edit-url-template = "https://github.com/heibench/zotgo/edit/main/{path}"
 default-theme = "rust"
 preferred-dark-theme = "ayu"

@@ -13,7 +13,7 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/CameronBrooks11/zotgo/internal/output"
+	"github.com/heibench/zotgo/internal/output"
 )
 
 // fakeZotero serves the Local API and connector routes the read commands use.

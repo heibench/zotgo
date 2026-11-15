@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // CollectionPaths writes requested collection paths in request order.

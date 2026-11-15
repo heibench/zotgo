@@ -1,6 +1,6 @@
 package output
 
-import "github.com/CameronBrooks11/zotgo/internal/zotero"
+import "github.com/heibench/zotgo/internal/zotero"
 
 // NewCollectionPaths converts resolved ancestry to collection-compatible DTOs.
 func NewCollectionPaths(paths []zotero.CollectionPath) []Collection {
