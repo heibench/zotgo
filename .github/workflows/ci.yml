@@ -89,3 +89,21 @@ jobs:
           distribution: goreleaser
           version: "~> v2"
           args: release --snapshot --clean
+
+  # The one required check. Every job feeds it, so adding or renaming a job
+  # edits `needs:` rather than branch protection. Nothing here is path-filtered,
+  # so a skipped job is a defect and each one must report success by name.
+  ok:
+    if: always()
+    needs: [check, test, race, audit, release-snapshot]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every job to succeed
+        if: >-
+          needs.check.result != 'success' ||
+          needs.test.result != 'success' ||
+          needs.race.result != 'success' ||
+          needs.audit.result != 'success' ||
+          needs['release-snapshot'].result != 'success'
+        run: exit 1
+      - run: echo "all jobs succeeded"
