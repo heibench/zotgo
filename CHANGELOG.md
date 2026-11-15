@@ -10,6 +10,24 @@ Planned and outstanding work is tracked in the
 
 ## [Unreleased]
 
+## [1.0.0-rc.2] - 2026-11-15
+
+The second release candidate, and the first from heibench/zotgo. It adds
+`zot item copy`, the module path moved with the repository, and `zot grant`
+asks before replacing a live lease. Schema 3 gains the `item-copy` and `item-copies` kinds; no existing
+field changed.
+
+### Added
+
+- `zot item copy --from <lib> --to <lib> <item-key>...` copies whole items
+  between libraries: the item, its notes and attachments, the bytes of managed
+  files, and the annotations on those attachments. Each object reports its own
+  status, an item with a failed child reports `partial` rather than created,
+  and nothing is rolled back. Both libraries must be named, and the target's
+  file editability is checked before anything is written. `--dry-run` shows
+  the plan. A copy between two real libraries has not yet been run end to end;
+  the plan, tree walk and executor are tested against a fake (#130).
+
 ### Changed
 
 - **Breaking for `go install`.** zotgo moved to the heibench organization, so the
@@ -389,7 +407,8 @@ contract before scripts could depend on it.
   `collections`, `stats`. Zero-dependency static binary and a goreleaser release
   pipeline.
 
-[Unreleased]: https://github.com/heibench/zotgo/compare/v1.0.0-rc.1...HEAD
+[Unreleased]: https://github.com/heibench/zotgo/compare/v1.0.0-rc.2...HEAD
+[1.0.0-rc.2]: https://github.com/heibench/zotgo/compare/v1.0.0-rc.1...v1.0.0-rc.2
 [1.0.0-rc.1]: https://github.com/heibench/zotgo/compare/v0.12.0...v1.0.0-rc.1
 [0.12.0]: https://github.com/heibench/zotgo/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/heibench/zotgo/compare/v0.10.0...v0.11.0
