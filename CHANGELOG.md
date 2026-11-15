@@ -14,9 +14,10 @@ Planned and outstanding work is tracked in the
 
 - **Breaking for `go install`.** zotgo moved to the heibench organization, so the
   module path is now `github.com/heibench/zotgo`. Install with
-  `go install github.com/heibench/zotgo/cmd/zot@latest`; the old path stays on
-  1.0.0-rc.1, the last release published under it. Release downloads and git
-  URLs redirect, and the documentation is now at <https://heibench.com/zotgo/>.
+  `go install github.com/heibench/zotgo/cmd/zot@latest`. The old path gets no
+  further releases: `go install` against it installs an older release or fails
+  with a module-path mismatch. Release downloads and git URLs redirect, and the
+  documentation is now at <https://heibench.com/zotgo/>.
 
 ### Fixed
 
