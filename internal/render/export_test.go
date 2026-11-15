@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 func TestCSV(t *testing.T) {

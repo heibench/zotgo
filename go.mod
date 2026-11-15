@@ -1,4 +1,4 @@
-module github.com/CameronBrooks11/zotgo
+module github.com/heibench/zotgo
 
 go 1.23
 

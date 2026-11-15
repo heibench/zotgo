@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Thanks for the report. Please do **not** report security issues here —
-        see [SECURITY.md](https://github.com/CameronBrooks11/zotgo/blob/main/SECURITY.md).
+        see [SECURITY.md](https://github.com/heibench/zotgo/blob/main/SECURITY.md).
   - type: textarea
     id: what-happened
     attributes:

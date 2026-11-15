@@ -21,13 +21,13 @@ limitation surfaces before you rely on it rather than partway through a write.
 ## Install
 
 ```bash
-go install github.com/CameronBrooks11/zotgo/cmd/zot@latest
+go install github.com/heibench/zotgo/cmd/zot@latest
 ```
 
 Or download a prebuilt binary for your platform from the [Releases] page — no
 runtime, no dependencies, just an executable.
 
-[Releases]: https://github.com/CameronBrooks11/zotgo/releases
+[Releases]: https://github.com/heibench/zotgo/releases
 
 ## Check your setup
 

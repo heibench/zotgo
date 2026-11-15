@@ -15,6 +15,6 @@ Outstanding and planned work lives in the [issue tracker][issues]; released
 changes are in the [changelog][changelog]. Contribution conventions are in
 [`AGENTS.md`][agents].
 
-[issues]: https://github.com/CameronBrooks11/zotgo/issues
-[changelog]: https://github.com/CameronBrooks11/zotgo/blob/main/CHANGELOG.md
-[agents]: https://github.com/CameronBrooks11/zotgo/blob/main/AGENTS.md
+[issues]: https://github.com/heibench/zotgo/issues
+[changelog]: https://github.com/heibench/zotgo/blob/main/CHANGELOG.md
+[agents]: https://github.com/heibench/zotgo/blob/main/AGENTS.md

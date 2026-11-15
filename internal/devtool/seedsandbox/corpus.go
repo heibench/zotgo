@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // corpusMarker tags every item this tool creates. Zotero's import silently

@@ -7,8 +7,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/CameronBrooks11/zotgo/internal/output"
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/output"
+	"github.com/heibench/zotgo/internal/zotero"
 	cli "github.com/urfave/cli/v3"
 )
 

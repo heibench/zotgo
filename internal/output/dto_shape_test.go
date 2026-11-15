@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // These tests pin the JSON shape of DTO constructors that were previously

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // withStdinContent points os.Stdin at a regular file holding content for the test,

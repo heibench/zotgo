@@ -1,6 +1,6 @@
 package output
 
-import "github.com/CameronBrooks11/zotgo/internal/zotero"
+import "github.com/heibench/zotgo/internal/zotero"
 
 // Annotation is privacy-preserving metadata for one attachment annotation.
 // Text, comments, position data, and image bytes require explicit raw output.

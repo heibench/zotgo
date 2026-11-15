@@ -9,8 +9,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/CameronBrooks11/zotgo/internal/output"
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/output"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // copyTarget records every object written to it, so a test can assert what the

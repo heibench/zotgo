@@ -5,8 +5,8 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/CameronBrooks11/zotgo/internal/output"
-	"github.com/CameronBrooks11/zotgo/internal/render"
+	"github.com/heibench/zotgo/internal/output"
+	"github.com/heibench/zotgo/internal/render"
 )
 
 func statsCommand() *cli.Command {

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // copySource is a minimal Zotero standing in for one item and its tree. It exists

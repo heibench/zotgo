@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 func TestLiveAttachmentImportPDFAndPNG(t *testing.T) {

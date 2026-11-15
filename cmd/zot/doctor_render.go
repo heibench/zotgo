@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // renderHealth writes a human-readable doctor report: what was probed, what the

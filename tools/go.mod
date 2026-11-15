@@ -1,4 +1,4 @@
-module github.com/CameronBrooks11/zotgo/tools
+module github.com/heibench/zotgo/tools
 
 go 1.27.0
 

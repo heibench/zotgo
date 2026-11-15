@@ -3,7 +3,7 @@ package output
 import (
 	"encoding/json"
 
-	"github.com/CameronBrooks11/zotgo/internal/zotero"
+	"github.com/heibench/zotgo/internal/zotero"
 )
 
 // Library identifies the library a payload came from.
