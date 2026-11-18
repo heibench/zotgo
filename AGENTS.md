@@ -57,10 +57,12 @@ Always run `just check` and `just test` before committing. Both must be green.
 
 ### The live suite
 
-Tests behind `//go:build live` talk to a real Zotero and never run in CI. They
-exist because the `httptest` fakes are seeded from shapes *we* captured, so they
-encode our reading of the API and cannot falsify it. The live tests decode
-Zotero's responses independently and compare.
+Tests behind `//go:build live` talk to a real Zotero. CI runs them against a
+seeded sandbox (see [CI and release](#ci-and-release)); locally, `just test-live`
+runs them against whichever Zotero `ZOTGO_BASE_URL` reaches and skips when none
+answers. They exist because the `httptest` fakes are seeded from shapes *we*
+captured, so they encode our reading of the API and cannot falsify it. The live
+tests decode Zotero's responses independently and compare.
 
 `just check` vets them under the build tag. Without that they compile only when
 someone remembers, and an API change rots them silently.
@@ -73,6 +75,24 @@ Some live checks need seeded data or they no-op. The annotation check fails hard
 when `ZOTGO_LIVE_ANNOTATED_ATTACHMENT` names an attachment (PDF/EPUB) carrying at
 least a highlight and a note with distinct sort indexes; unset, it discovers or
 skips. Sync that attachment so the `--web` variant sees the same key.
+
+**Cover the second run, not just the first.** A write has to work from a fresh
+process that reuses a stored key and never calls authorize. The
+`Zotero-Server-ID` bootstrap bug hid because every test authorized first, which
+cached the server ID; only a fresh process with a stored key hit the 428. The
+fix and its reason are where `writeRequest` calls `ensureServerID` in
+`internal/zotero/write.go`.
+
+**The authorize modal can open behind other windows.** `Authorize` then waits out
+`AuthorizeTimeout` (two minutes) and fails, which looks like a code bug. Bring
+Zotero to the front before an interactive run.
+
+**Refuse the authorize modal with Deny, never by dismissing it.** In Zotero builds
+without `zotero/zotero@045d520`, closing the modal with Escape or the window's
+close button grants a remembered ("Always Allow") key, because the prompt reports
+a dismissal as its second button and Always Allow sat there. As of 2026-11-18
+that is every 10.0.x release through 10.0.9. A denial test that dismisses the
+modal is testing a grant.
 
 ### `just seed-sandbox`
 
@@ -107,10 +127,10 @@ read back, and no database is touched. It exists because CI cannot click a modal
 and without it a version matrix is not possible at all. Prefer the default
 anywhere a human is present.
 
-**What it cannot cover.** Nine live tests still skip against it: eight need a real
-`ZOTGO_API_KEY` for the Web API, and one needs a group library. Groups and web
-accounts are zotero.org concepts and cannot be created locally. Everything else —
-18 tests including the write round-trip — runs unattended.
+**What it cannot cover.** The live tests that need a real `ZOTGO_API_KEY` for the
+Web API, or a group library, skip against it: groups and web accounts are
+zotero.org concepts and cannot be created locally. Everything else, including the
+write round-trip, runs unattended.
 
 ### Use a throwaway profile
 
@@ -204,14 +224,57 @@ never add tool dependencies to the main `go.mod`.
 
 ## CI and release
 
-Two GitHub Actions workflows live under `.github/workflows/`:
+Four GitHub Actions workflows live under `.github/workflows/`:
 
-- `ci.yml` — on push to `main` and PRs: `just check`, `just test` across an
-  OS matrix (ubuntu/macOS/windows × Go 1.23–1.24), and a goreleaser
+- `ci.yml` — on push to `main` and every PR: `just check` (on current Go, which
+  staticcheck needs), `just test` across ubuntu/macOS/windows × Go
+  `oldstable`/`stable`, `just test-race`, `just vuln`, and a goreleaser
   `--snapshot` build that proves the cross-platform release pipeline without
-  publishing.
+  publishing. The `ok` job depends on all of them and is the only required
+  status check (a repository ruleset on `main`, which also requires the branch
+  to be up to date), so a new job goes into `ok`'s `needs:`, not the ruleset.
+- `live.yml` — the live suite against a Zotero that `just test-live-version`
+  downloads, seeds unattended and runs under a virtual display: the current
+  Zotero on every PR and push to `main`, and a matrix of boundary versions
+  weekly and on dispatch. The file says which versions and why. It is not a
+  required check, so read its result before merging.
+- `docs.yml` — builds the mdBook under `docs/` and publishes it to GitHub Pages
+  on a push to `main` that touches `docs/` or `book.toml`.
 - `release.yml` — on a `v*.*.*` tag: goreleaser cross-compiles binaries for
   linux/macOS/windows × amd64/arm64 and publishes a GitHub Release with
-  checksums.
+  checksums, marked as a prerelease when the tag is a semver prerelease.
 
-CI runs through `just` so it matches the local gate.
+The Go jobs run through `just`, so they match the local gate.
+
+## Pull requests
+
+Merges are squash-only, and the squash commit takes the PR title as its subject
+and the PR body as its message (`PR_TITLE`, `PR_BODY`), so the body is what lands
+on `main`: write it as the commit message.
+
+### Reviewing a PR from a fork
+
+- **Workflows wait for approval on a first-time contributor's PR**
+  (`first_time_contributors`) and start at once for anyone who has contributed
+  before. Until approval the only checks are whatever installed apps report, so
+  read the check names, not the count: CI has run only when `ok` reports.
+- **Do not count on code scanning for fork code.** CodeQL's default setup has
+  analyzed same-repo PRs (#141) but not fork heads (#115 and #123 ran CI with no
+  `Analyze` run), so fork code is first scanned on `main`, after merge. That is
+  acceptable for a rune filter like #115, not for a change to parsing or to
+  anything that runs a process.
+- **Read before running.** Read the entire diff, and check the file list for
+  anything outside the stated scope — `go.mod`/`go.sum`, `.github/`, network
+  calls, `init()`, build tags — before running it locally. Then run `just check`
+  and `just test`, revert the fix, and confirm its test fails without it.
+- **Never merge a fork PR on a green check alone.** A `good first issue` label
+  draws unsolicited PRs within hours, sometimes several racing for one issue
+  (#120 drew #122 and #123), so apply it deliberately. Judge each PR on its
+  merits: the risk is not a contributor's first PR but a later one, reviewed less
+  carefully because the earlier ones were fine.
+
+### Integrating a contributor's PR
+
+The contributor stays the author. Changes made while integrating go in the PR
+body, which becomes the commit, and in a PR comment, since the squash discards
+the branch's own commits.
