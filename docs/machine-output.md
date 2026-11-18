@@ -72,7 +72,7 @@ Every write command emits a mutation document whose `data` is always an array,
 even for a single object. Each record carries the request `index`, its
 `operation`, and a `status`; dry runs use `planned` and perform no authorization
 or write. Records preserve request order, and a partial batch emits every
-outcome before the command exits with status 1. Mutation documents have no
+outcome before the command exits with status 1 (see [Exit codes](exit-codes.md)). Mutation documents have no
 pagination `meta` and never expose Zotero object versions or the raw request
 body.
 

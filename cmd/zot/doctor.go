@@ -46,12 +46,12 @@ func doctorCommand() *cli.Command {
 				renderHealth(out(cmd), h, libraries)
 			}
 
-			// An unreachable Zotero is a non-zero exit in every mode, so scripts
-			// can branch on the status without parsing the payload.
+			// A Zotero that is not ready exits 4 (environment) in every mode, so
+			// scripts can branch on the status without parsing the payload.
 			if h.Ready() {
 				return nil
 			}
-			return cli.Exit("", 1)
+			return cli.Exit("", exitEnvironment)
 		},
 	}
 }

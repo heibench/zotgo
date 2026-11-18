@@ -11,7 +11,11 @@ import (
 
 // outputMode reads the three mutually exclusive output flags.
 func outputMode(cmd *cli.Command) (output.Mode, error) {
-	return output.ResolveMode(cmd.Bool("json"), cmd.Bool("jsonl"), cmd.Bool("raw"))
+	mode, err := output.ResolveMode(cmd.Bool("json"), cmd.Bool("jsonl"), cmd.Bool("raw"))
+	if err != nil {
+		return mode, usageErr{err}
+	}
+	return mode, nil
 }
 
 // machineWriteMode resolves the output mode for a write command and enforces the
@@ -28,7 +32,7 @@ func machineWriteMode(cmd *cli.Command, noun string) (output.Mode, error) {
 		return mode, output.ErrRawUnavailable
 	}
 	if mode != output.ModeHuman && !cmd.Bool("dry-run") && !cmd.Bool("yes") {
-		return mode, fmt.Errorf("%s %s writes require --yes (or --dry-run)", mode, noun)
+		return mode, usageError("%s %s writes require --yes (or --dry-run)", mode, noun)
 	}
 	return mode, nil
 }

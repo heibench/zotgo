@@ -4,14 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/urfave/cli/v3"
 
 	"github.com/heibench/zotgo/internal/output"
 )
@@ -186,9 +183,8 @@ func TestDoctorDisabledExitsNonZero(t *testing.T) {
 	srv := fakeZotero(false)
 	defer srv.Close()
 	out, _, err := runCLI(srv.URL, "doctor")
-	var coder cli.ExitCoder
-	if !errors.As(err, &coder) || coder.ExitCode() != 1 {
-		t.Fatalf("err = %v, want ExitCoder(1)", err)
+	if err == nil || exitCode(err) != exitEnvironment {
+		t.Fatalf("err = %v, want exit %d", err, exitEnvironment)
 	}
 	if !strings.Contains(out, "Local API disabled") {
 		t.Errorf("output missing disabled guidance:\n%s", out)

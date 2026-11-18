@@ -120,8 +120,8 @@ func TestHelpSuggestsCommandsAndFlags(t *testing.T) {
 		{name: "top-level command", args: []string{"serach"}, want: "search"},
 		{name: "nested command", args: []string{"item", "crate"}, want: "create"},
 		{name: "executable parent command", args: []string{"grant", "revok"}, want: `did you mean "revoke"`},
-		{name: "global flag", args: []string{"--jsn", "list"}, want: `Did you mean "--json"?`},
-		{name: "leaf flag", args: []string{"search", "--limt", "1", "query"}, want: `Did you mean "--limit"?`},
+		{name: "global flag", args: []string{"--jsn", "list"}, want: `did you mean "--json"?`},
+		{name: "leaf flag", args: []string{"search", "--limt", "1", "query"}, want: `did you mean "--limit"?`},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

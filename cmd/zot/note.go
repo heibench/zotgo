@@ -34,7 +34,7 @@ func noteShowCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			key := cmd.Args().First()
 			if key == "" {
-				return errors.New("missing note key (usage: zot note show <note-key>)")
+				return usageError("missing note key (usage: zot note show <note-key>)")
 			}
 			mode, err := outputMode(cmd)
 			if err != nil {

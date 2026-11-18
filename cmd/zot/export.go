@@ -35,7 +35,7 @@ func exportCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			format := strings.ToLower(cmd.Args().First())
 			if format == "" {
-				return fmt.Errorf("missing format (usage: zot export <%s>)", strings.Join(allFormats(), "|"))
+				return usageError("missing format (usage: zot export <%s>)", strings.Join(allFormats(), "|"))
 			}
 
 			c, lib, err := resolveLibrary(ctx, cmd)
@@ -110,7 +110,7 @@ func renderExport(ctx context.Context, c *zotero.Client, lib zotero.LibraryRef, 
 
 	data, err := c.Export(ctx, lib, opts, format)
 	if errors.Is(err, zotero.ErrUnsupportedFormat) {
-		return nil, fmt.Errorf("unknown format %q (want %s)", format, strings.Join(allFormats(), ", "))
+		return nil, usageError("unknown format %q (want %s)", format, strings.Join(allFormats(), ", "))
 	}
 	return data, friendly(err)
 }

@@ -63,7 +63,7 @@ func itemCreateAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 
 	file := cmd.String("file")
@@ -110,7 +110,7 @@ func itemCreateAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	if fromStdin && mode == output.ModeHuman && !cmd.Bool("yes") {
-		return errors.New("item JSON was read from stdin, so I cannot prompt — re-run with --yes (or --dry-run), or use --file")
+		return usageError("item JSON was read from stdin, so I cannot prompt — re-run with --yes (or --dry-run), or use --file")
 	}
 	if proceed, err := confirmWrite(ctx, cmd, c, mode, w, fmt.Sprintf("Create %d item(s) in %s?", len(items), lib.Name)); err != nil {
 		return err
@@ -152,7 +152,7 @@ func readItemInput(file string) ([]byte, error) {
 		return os.ReadFile(file)
 	}
 	if isTerminal(os.Stdin) {
-		return nil, errors.New("no item JSON given — use --file, or pipe JSON to stdin (e.g. zot item template book | zot item create)")
+		return nil, usageError("no item JSON given — use --file, or pipe JSON to stdin (e.g. zot item template book | zot item create)")
 	}
 	return io.ReadAll(os.Stdin)
 }
@@ -464,16 +464,14 @@ func writeFriendly(err error) error {
 		errors.Is(err, ErrLeaseOperation):
 		return err // these messages are already the actionable reason
 	case errors.Is(err, zotero.ErrAuthorizeDenied):
-		return errors.New("authorization denied in Zotero")
+		return reworded{"authorization denied in Zotero", err}
 	case errors.Is(err, zotero.ErrWriteUnauthorized):
 		_ = clearLocalKey() // a stale/consumed key is worse than none
-		//lint:ignore ST1005 "Zotero" is a proper noun.
-		return errors.New("Zotero rejected the local key (it may have expired) — re-run to re-authorize")
+		return reworded{"Zotero rejected the local key (it may have expired) — re-run to re-authorize", err}
 	case errors.Is(err, zotero.ErrPreconditionRequired):
-		//lint:ignore ST1005 "Zotero" is a proper noun.
-		return errors.New("Zotero requires a write precondition zotgo did not supply (this is a bug)")
+		return reworded{"Zotero requires a write precondition zotgo did not supply (this is a bug)", err}
 	case errors.Is(err, zotero.ErrPreconditionFailed):
-		return errors.New("the library changed since this write was prepared — re-run")
+		return reworded{"the library changed since this write was prepared — re-run", err}
 	case errors.Is(err, zotero.ErrWriteOutcomeUnknown):
 		// Wrap, don't replace: callers (e.g. attachment import) inspect this
 		// sentinel to classify a write as partial rather than failed.
@@ -497,7 +495,7 @@ func itemTemplateCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			itemType := cmd.Args().First()
 			if itemType == "" {
-				return errors.New("missing item type (e.g. zot item template book)")
+				return usageError("missing item type (e.g. zot item template book)")
 			}
 			if cmd.Bool("web") {
 				return errors.New("item template uses the local endpoint")
@@ -540,11 +538,11 @@ func itemPatchAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	key := cmd.Args().First()
 	if key == "" {
-		return errors.New("missing item key (usage: zot item patch <item-key>)")
+		return usageError("missing item key (usage: zot item patch <item-key>)")
 	}
 	file := cmd.String("file")
 	fromStdin := file == "" || file == "-"
@@ -598,7 +596,7 @@ func itemPatchAction(ctx context.Context, cmd *cli.Command) error {
 		return nil
 	}
 	if fromStdin && mode == output.ModeHuman && !cmd.Bool("yes") {
-		return errors.New("the patch was read from stdin, so I cannot prompt — re-run with --yes (or --dry-run), or use --file")
+		return usageError("the patch was read from stdin, so I cannot prompt — re-run with --yes (or --dry-run), or use --file")
 	}
 	if proceed, err := confirmWrite(ctx, cmd, c, mode, w, fmt.Sprintf("Patch %s?", key)); err != nil {
 		return err
@@ -640,11 +638,11 @@ func itemReplaceAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	key := cmd.Args().First()
 	if key == "" {
-		return errors.New("missing item key (usage: zot item replace <item-key>)")
+		return usageError("missing item key (usage: zot item replace <item-key>)")
 	}
 	file := cmd.String("file")
 	fromStdin := file == "" || file == "-"
@@ -699,7 +697,7 @@ func itemReplaceAction(ctx context.Context, cmd *cli.Command) error {
 		return nil
 	}
 	if fromStdin && mode == output.ModeHuman && !cmd.Bool("yes") {
-		return errors.New("the item JSON was read from stdin, so I cannot prompt — re-run with --yes (or --dry-run), or use --file")
+		return usageError("the item JSON was read from stdin, so I cannot prompt — re-run with --yes (or --dry-run), or use --file")
 	}
 	if proceed, err := confirmWrite(ctx, cmd, c, mode, w, fmt.Sprintf("Replace %s? Fields you omitted will be reset.", key)); err != nil {
 		return err
@@ -779,11 +777,11 @@ func itemDeleteAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	keys := cmd.Args().Slice()
 	if len(keys) == 0 {
-		return errors.New("missing item key(s) (usage: zot item delete <item-key>...)")
+		return usageError("missing item key(s) (usage: zot item delete <item-key>...)")
 	}
 	if len(keys) > zotero.MaxDeleteObjects {
 		return fmt.Errorf("%d keys exceeds the %d-item delete limit", len(keys), zotero.MaxDeleteObjects)

@@ -47,11 +47,11 @@ func tagPurgeAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	names := cmd.Args().Slice()
 	if len(names) == 0 {
-		return errors.New("missing tag name(s) (usage: zot tag purge <tag>...)")
+		return usageError("missing tag name(s) (usage: zot tag purge <tag>...)")
 	}
 	if len(names) > zotero.MaxDeleteObjects {
 		return fmt.Errorf("%d tags exceeds the %d-tag purge limit", len(names), zotero.MaxDeleteObjects)
@@ -144,7 +144,7 @@ func itemTagAction(ctx context.Context, cmd *cli.Command, add bool) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	operation := "remove"
 	if add {
@@ -157,13 +157,13 @@ func itemTagAction(ctx context.Context, cmd *cli.Command, add bool) error {
 	names := cmd.Args().Slice()
 	if itemKey == "" {
 		if len(names) == 0 {
-			return fmt.Errorf("missing item key (usage: zot tag %s <item-key> <tag>...)", operation)
+			return usageError("missing item key (usage: zot tag %s <item-key> <tag>...)", operation)
 		}
 		itemKey = names[0]
 		names = names[1:]
 	}
 	if len(names) == 0 {
-		return fmt.Errorf("missing tag name(s) (usage: zot tag %s <item-key> <tag>...)", operation)
+		return usageError("missing tag name(s) (usage: zot tag %s <item-key> <tag>...)", operation)
 	}
 
 	c, lib, err := resolveLibrary(ctx, cmd)

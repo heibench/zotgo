@@ -52,11 +52,11 @@ func collectionCreateAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	name := cmd.Args().First()
 	if name == "" {
-		return errors.New("missing collection name (usage: zot collection create <name>)")
+		return usageError("missing collection name (usage: zot collection create <name>)")
 	}
 	parent := cmd.String("parent")
 
@@ -224,12 +224,12 @@ func collectionRenameAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	key := cmd.Args().Get(0)
 	name := cmd.Args().Get(1)
 	if key == "" || name == "" {
-		return errors.New("usage: zot collection rename <key> <new-name>")
+		return usageError("usage: zot collection rename <key> <new-name>")
 	}
 
 	c, lib, err := resolveLibrary(ctx, cmd)
@@ -305,19 +305,19 @@ func collectionMoveAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	key := cmd.Args().First()
 	if key == "" {
-		return errors.New("missing collection key (usage: zot collection move <key> --to <parent> | --to-top)")
+		return usageError("missing collection key (usage: zot collection move <key> --to <parent> | --to-top)")
 	}
 	to := cmd.String("to")
 	toTop := cmd.Bool("to-top")
 	switch {
 	case to == "" && !toTop:
-		return errors.New("specify a destination: --to <parent-key> or --to-top")
+		return usageError("specify a destination: --to <parent-key> or --to-top")
 	case to != "" && toTop:
-		return errors.New("--to and --to-top are mutually exclusive")
+		return usageError("--to and --to-top are mutually exclusive")
 	}
 
 	c, lib, err := resolveLibrary(ctx, cmd)
@@ -398,11 +398,11 @@ func collectionDeleteAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 	keys := cmd.Args().Slice()
 	if len(keys) == 0 {
-		return errors.New("missing collection key(s) (usage: zot collection delete <key>...)")
+		return usageError("missing collection key(s) (usage: zot collection delete <key>...)")
 	}
 	if len(keys) > zotero.MaxDeleteObjects {
 		return fmt.Errorf("%d keys exceeds the %d-collection delete limit", len(keys), zotero.MaxDeleteObjects)

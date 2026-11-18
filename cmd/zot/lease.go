@@ -59,10 +59,10 @@ const DefaultLeaseTTL = 30 * time.Minute
 // test does not have).
 func validateTTL(ttl time.Duration) error {
 	if ttl <= 0 {
-		return errors.New("--ttl must be positive")
+		return usageError("--ttl must be positive")
 	}
 	if ttl > MaxLeaseTTL {
-		return fmt.Errorf("--ttl %s exceeds the maximum %s", ttl, MaxLeaseTTL)
+		return usageError("--ttl %s exceeds the maximum %s", ttl, MaxLeaseTTL)
 	}
 	return nil
 }
@@ -314,7 +314,7 @@ func resolveGrantOperations(requested []string) ([]string, error) {
 	for _, name := range requested {
 		name = strings.TrimSpace(name)
 		if !valid[name] {
-			return nil, fmt.Errorf("unknown operation %q; valid operations are %s", name, strings.Join(operationNames(), ", "))
+			return nil, usageError("unknown operation %q; valid operations are %s", name, strings.Join(operationNames(), ", "))
 		}
 		if !seen[name] {
 			seen[name] = true

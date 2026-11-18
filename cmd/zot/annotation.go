@@ -37,10 +37,10 @@ func annotationListCommand() *cli.Command {
 func annotationListAction(ctx context.Context, cmd *cli.Command) error {
 	args := cmd.Args().Slice()
 	if len(args) == 0 || args[0] == "" {
-		return errors.New("missing attachment key (usage: zot annotation list <attachment-key>)")
+		return usageError("missing attachment key (usage: zot annotation list <attachment-key>)")
 	}
 	if len(args) != 1 {
-		return errors.New("annotation list accepts exactly one attachment key")
+		return usageError("annotation list accepts exactly one attachment key")
 	}
 	mode, err := outputMode(cmd)
 	if err != nil {

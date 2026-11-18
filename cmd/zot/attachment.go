@@ -36,7 +36,7 @@ func attachmentShowCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			key := cmd.Args().First()
 			if key == "" {
-				return errors.New("missing attachment key (usage: zot attachment show <attachment-key>)")
+				return usageError("missing attachment key (usage: zot attachment show <attachment-key>)")
 			}
 			mode, err := outputMode(cmd)
 			if err != nil {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -40,19 +39,19 @@ func itemCopyAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("writes are local-only; the --web profile is read-only")
+		return usageError("writes are local-only; the --web profile is read-only")
 	}
 
 	keys := cmd.Args().Slice()
 	if len(keys) == 0 {
-		return errors.New("missing item key (usage: zot item copy --from <lib> --to <lib> <item-key>...)")
+		return usageError("missing item key (usage: zot item copy --from <lib> --to <lib> <item-key>...)")
 	}
 	// Neither endpoint is inferred. A copy has two of them, and the lesson of the
 	// grant default is that a write target guessed from context is a write in the
 	// wrong place.
 	fromSelector, toSelector := strings.TrimSpace(cmd.String("from")), strings.TrimSpace(cmd.String("to"))
 	if fromSelector == "" || toSelector == "" {
-		return errors.New("zot item copy requires both --from and --to: a copy has two libraries and neither is inferred")
+		return usageError("zot item copy requires both --from and --to: a copy has two libraries and neither is inferred")
 	}
 
 	c, err := newClient(cmd)
@@ -68,7 +67,7 @@ func itemCopyAction(ctx context.Context, cmd *cli.Command) error {
 		return friendly(err)
 	}
 	if source.Kind == target.Kind && source.ID == target.ID {
-		return fmt.Errorf("--from and --to are the same library (%s); a copy needs two", source.Name)
+		return usageError("--from and --to are the same library (%s); a copy needs two", source.Name)
 	}
 
 	withAttachments := !cmd.Bool("no-attachments")

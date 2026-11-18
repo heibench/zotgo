@@ -41,7 +41,7 @@ func grantCommand() *cli.Command {
 func grantAction(ctx context.Context, cmd *cli.Command) error {
 	if arg := cmd.Args().First(); arg != "" {
 		suggestion := cli.SuggestCommand(cmd.Commands, arg)
-		return fmt.Errorf("unknown grant subcommand %q; did you mean %q? (see `zot grant --help`)", arg, suggestion)
+		return usageError("unknown grant subcommand %q; did you mean %q? (see `zot grant --help`)", arg, suggestion)
 	}
 	// The library a lease covers is never inferred. Every other command defaults
 	// to My Library harmlessly — a read reaches the wrong library and you see it
@@ -54,13 +54,13 @@ func grantAction(ctx context.Context, cmd *cli.Command) error {
 	// only caller a TTY refusal would reach is a script, which cannot mint a
 	// lease at all.
 	if strings.TrimSpace(cmd.String("library")) == "" {
-		return errors.New("zot grant requires an explicit library: pass --library (`me` for My Library, or a group name or id) or set ZOTGO_LIBRARY — a write lease never infers its target (see docs/design/write-authority.md)")
+		return usageError("zot grant requires an explicit library: pass --library (`me` for My Library, or a group name or id) or set ZOTGO_LIBRARY — a write lease never infers its target (see docs/design/write-authority.md)")
 	}
 	// Minting is deliberately the inverse of every other write command: it demands
 	// an interactive human. An agent cannot approve Zotero's modal, and --yes does
 	// not apply here.
 	if !isTerminal(os.Stdin) {
-		return errors.New("zot grant must run in an interactive terminal: a human approves Zotero's authorize modal and confirms the scope, so it cannot be granted non-interactively (--yes does not apply here)")
+		return usageError("zot grant must run in an interactive terminal: a human approves Zotero's authorize modal and confirms the scope, so it cannot be granted non-interactively (--yes does not apply here)")
 	}
 	if cmd.Bool("web") {
 		return errors.New("zot grant authorizes local writes; a Web API key is scoped and revoked at https://www.zotero.org/settings/keys")

@@ -131,11 +131,11 @@ func validateAttachmentContentType(value string) (string, error) {
 	}
 	mediaType, params, err := mime.ParseMediaType(value)
 	if err != nil {
-		return "", fmt.Errorf("invalid --content-type MIME type: %w", err)
+		return "", usageError("invalid --content-type MIME type: %w", err)
 	}
 	typeName, subtype, ok := strings.Cut(mediaType, "/")
 	if !ok || typeName == "" || subtype == "" || strings.Contains(typeName, "*") || strings.Contains(subtype, "*") {
-		return "", errors.New("invalid --content-type MIME type: expected a concrete type/subtype")
+		return "", usageError("invalid --content-type MIME type: expected a concrete type/subtype")
 	}
 	return mime.FormatMediaType(mediaType, params), nil
 }
@@ -190,10 +190,10 @@ func validateAttachmentSourceURL(value string) error {
 	}
 	parsed, err := url.Parse(value)
 	if err != nil || parsed.Scheme == "" || parsed.Host == "" || (parsed.Scheme != "http" && parsed.Scheme != "https") {
-		return errors.New("--source-url must be an absolute HTTP or HTTPS URL")
+		return usageError("--source-url must be an absolute HTTP or HTTPS URL")
 	}
 	if parsed.User != nil {
-		return errors.New("--source-url must not contain credentials")
+		return usageError("--source-url must not contain credentials")
 	}
 	return nil
 }
