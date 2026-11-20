@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/urfave/cli/v3"
@@ -27,7 +26,7 @@ func searchCommand() *cli.Command {
 			if query == "" {
 				// FullName carries the invocation path, so the alias `item search`
 				// hints `zot item search`, not the top-level `zot search`.
-				return fmt.Errorf("missing search query (usage: %s <query>)", cmd.FullName())
+				return usageError("missing search query (usage: %s <query>)", cmd.FullName())
 			}
 			c, lib, err := resolveLibrary(ctx, cmd)
 			if err != nil {

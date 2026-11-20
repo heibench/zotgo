@@ -7,6 +7,7 @@
 - [Writing](writing.md)
 - [Endpoints & profiles](profiles.md)
 - [Machine-readable output](machine-output.md)
+- [Exit codes](exit-codes.md)
 - [Zotero API reference](zotero-api.md)
 
 # Design

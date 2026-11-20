@@ -33,7 +33,7 @@ func relationListCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			key := cmd.Args().First()
 			if key == "" {
-				return errors.New("missing item key (usage: zot relation list <item-key>)")
+				return usageError("missing item key (usage: zot relation list <item-key>)")
 			}
 			mode, err := outputMode(cmd)
 			if err != nil {

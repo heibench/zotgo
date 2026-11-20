@@ -44,15 +44,10 @@ func main() {
 	if err == nil {
 		return
 	}
-	var coder cli.ExitCoder
-	if errors.As(err, &coder) {
-		if msg := coder.Error(); msg != "" {
-			fmt.Fprintln(os.Stderr, "zot: "+msg)
-		}
-		os.Exit(coder.ExitCode())
+	if msg := err.Error(); msg != "" {
+		fmt.Fprintln(os.Stderr, "zot: "+msg)
 	}
-	fmt.Fprintln(os.Stderr, "zot: "+err.Error())
-	os.Exit(1)
+	os.Exit(exitCode(err))
 }
 
 func rootCommand() *cli.Command {
@@ -71,6 +66,7 @@ func rootCommand() *cli.Command {
 		// main() owns error printing and exit codes; keep urfave from also
 		// printing or calling os.Exit.
 		ExitErrHandler: func(context.Context, *cli.Command, error) {},
+		OnUsageError:   flagUsageError,
 		// Reject a contradictory output mode before any command touches the
 		// network, so the user sees the flag mistake rather than whatever the
 		// request happened to fail with.
@@ -112,7 +108,8 @@ func rootCommand() *cli.Command {
 }
 
 // discoveryCommands assigns every top-level command to a task-oriented help
-// category and enables typo suggestions throughout the command tree.
+// category, and enables typo suggestions and usage-error handling throughout the
+// command tree.
 func discoveryCommands() []*cli.Command {
 	groups := []struct {
 		category string
@@ -139,6 +136,7 @@ func discoveryCommands() []*cli.Command {
 
 func enableSuggestions(command *cli.Command) {
 	command.Suggest = true
+	command.OnUsageError = flagUsageError
 	for _, child := range command.Commands {
 		enableSuggestions(child)
 	}
@@ -151,7 +149,7 @@ func enableSuggestions(command *cli.Command) {
 func subcommandRequired(suggest string) cli.ActionFunc {
 	return func(_ context.Context, cmd *cli.Command) error {
 		if arg := cmd.Args().First(); arg != "" {
-			return fmt.Errorf("unknown %s subcommand %q; did you mean %q? (see `zot %s --help`)", cmd.Name, arg, suggest, cmd.Name)
+			return usageError("unknown %s subcommand %q; did you mean %q? (see `zot %s --help`)", cmd.Name, arg, suggest, cmd.Name)
 		}
 		return cli.ShowSubcommandHelp(cmd)
 	}
@@ -185,7 +183,7 @@ func newClient(cmd *cli.Command) (*zotero.Client, error) {
 	if cmd.Bool("web") {
 		key := os.Getenv("ZOTGO_API_KEY")
 		if key == "" {
-			return nil, errors.New("--web needs a Zotero API key; set ZOTGO_API_KEY (create one at https://www.zotero.org/settings/keys)")
+			return nil, errNoAPIKey
 		}
 		c = zotero.NewWeb(cmd.String("url"), key)
 	} else {
@@ -218,21 +216,15 @@ func resolveLibrary(ctx context.Context, cmd *cli.Command) (*zotero.Client, zote
 func friendly(err error) error {
 	switch {
 	case errors.Is(err, zotero.ErrZoteroDown):
-		return errors.New("cannot reach Zotero — is the desktop app running? (try `zot doctor`)")
+		return reworded{"cannot reach Zotero — is the desktop app running? (try `zot doctor`)", err}
 	case errors.Is(err, zotero.ErrLocalAPIDisabled):
-		//lint:ignore ST1005 "Zotero" is a proper noun.
-		return errors.New("Zotero's Local API is disabled — run `zot doctor` for setup steps")
+		return reworded{"Zotero's Local API is disabled — run `zot doctor` for setup steps", err}
 	case errors.Is(err, zotero.ErrInvalidAPIKey):
-		//lint:ignore ST1005 "Zotero" is a proper noun.
-		return errors.New("Zotero rejected the API key — check ZOTGO_API_KEY (run `zot doctor --web`)")
+		return reworded{"Zotero rejected the API key — check ZOTGO_API_KEY (run `zot doctor --web`)", err}
 	case errors.Is(err, zotero.ErrTransport):
-		return errors.New("lost the connection to Zotero mid-request — is it still running? (try `zot doctor`)")
-	}
-	// Rate limiting only ever comes from the Web API; the local API does not 429.
-	var status zotero.StatusError
-	if errors.As(err, &status) && (status.StatusCode == 429 || status.StatusCode == 503) {
-		//lint:ignore ST1005 "Zotero" is a proper noun.
-		return errors.New("Zotero is rate-limiting the request — wait a moment and retry")
+		return reworded{"lost the connection to Zotero mid-request — is it still running? (try `zot doctor`)", err}
+	case isRateLimited(err):
+		return reworded{"Zotero is rate-limiting the request — wait a moment and retry", err}
 	}
 	return err
 }

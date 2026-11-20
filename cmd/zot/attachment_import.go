@@ -44,19 +44,19 @@ func attachmentImportAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	if cmd.Bool("web") {
-		return errors.New("managed attachment import is local-only; the --web profile is read-only")
+		return usageError("managed attachment import is local-only; the --web profile is read-only")
 	}
 	parentKey := strings.TrimSpace(cmd.String("parent"))
 	if parentKey == "" {
-		return errors.New("missing --parent item key; see `zot attachment import --help`")
+		return usageError("missing --parent item key; see `zot attachment import --help`")
 	}
 	sourcePath := cmd.String("path")
 	if sourcePath == "" {
-		return errors.New("missing --path; see `zot attachment import --help`")
+		return usageError("missing --path; see `zot attachment import --help`")
 	}
 	title := strings.TrimSpace(cmd.String("title"))
 	if title == "" {
-		return errors.New("attachment title must not be empty")
+		return usageError("attachment title must not be empty")
 	}
 	sourceURL := strings.TrimSpace(cmd.String("source-url"))
 	if err := validateAttachmentSourceURL(sourceURL); err != nil {

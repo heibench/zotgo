@@ -10,6 +10,19 @@ Planned and outstanding work is tracked in the
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking for scripts.** Exit codes follow a documented table
+  ([Exit codes](docs/exit-codes.md)) instead of `1` for every failure (#144).
+  A mistake on the command line (an unknown command, subcommand or flag, or a
+  missing, malformed or contradictory argument) now exits `64`; an unknown
+  command used to exit `3`. A missing environment (Zotero not running or
+  unreachable, the Local API off, no write-capable build, a missing or
+  rejected key, no active write lease, Web API rate limiting, and `zot doctor`
+  reporting not ready) now exits `4`. A request refused on its merits, and a
+  write that comes back `partial` or `failed`, still exits `1`. A mistyped
+  flag no longer prints the full help text after the error.
+
 ## [1.0.0-rc.2] - 2026-11-15
 
 The second release candidate, and the first from heibench/zotgo. It adds

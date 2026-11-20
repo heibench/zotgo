@@ -56,9 +56,9 @@ Ready. zotgo can read your library.
 
 `doctor` reports what the endpoint can *do*, not merely whether it answers. Every
 unsupported capability carries its reason, so there is always something to act on.
-`zot --json doctor` reports the same under `data.capabilities`, and exits non-zero
-when Zotero is unreachable — so a script can branch on the exit status without
-parsing the payload.
+`zot --json doctor` reports the same under `data.capabilities`, and exits 4
+when Zotero is not ready — so a script can branch on the exit status without
+parsing the payload. [Exit codes](exit-codes.md) lists the rest.
 
 The **Libraries** section (local endpoint only) reports, per library you can file
 into, whether it accepts attachment files. This is independent of the

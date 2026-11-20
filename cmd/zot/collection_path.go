@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/urfave/cli/v3"
@@ -26,7 +25,7 @@ func collectionPathCommand() *cli.Command {
 func collectionPathAction(ctx context.Context, cmd *cli.Command) error {
 	keys := cmd.Args().Slice()
 	if len(keys) == 0 {
-		return errors.New("missing collection key (usage: zot collection path <collection-key>...)")
+		return usageError("missing collection key (usage: zot collection path <collection-key>...)")
 	}
 	mode, err := outputMode(cmd)
 	if err != nil {
