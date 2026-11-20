@@ -93,7 +93,7 @@ type CapabilityStatus struct {
 func (h Health) localAPIUnavailable() string {
 	switch {
 	case !h.ZoteroRunning:
-		return "Zotero is not running"
+		return h.zoteroUnavailable()
 	case !h.LocalAPIEnabled:
 		return "Zotero's Local API is disabled"
 	default:
@@ -124,9 +124,23 @@ func (h Health) localCapabilities() []CapabilityStatus {
 		{Name: CapabilityLocalFileAccess, Supported: blocked == "", Reason: blocked},
 	}
 	if !h.ZoteroRunning {
-		caps[2].Reason = "Zotero is not running"
+		caps[2].Reason = h.zoteroUnavailable()
 	}
 	return caps
+}
+
+// zoteroUnavailable says what the ping found instead of Zotero. It states what
+// was observed rather than a cause: "nothing accepted a connection" is also what
+// a Zotero on another port, or across a network namespace, looks like.
+func (h Health) zoteroUnavailable() string {
+	switch {
+	case h.Reachable:
+		return "something other than Zotero is answering"
+	case h.Unresponsive:
+		return "something is listening but did not answer"
+	default:
+		return "nothing accepted a connection"
+	}
 }
 
 // localWriteCapability is now probe-derived: the Local API returns a

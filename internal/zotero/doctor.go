@@ -3,6 +3,7 @@ package zotero
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -12,17 +13,22 @@ import (
 type Health struct {
 	// Endpoint identifies what was probed: its kind and address.
 	Endpoint Profile
-	// Reachable is the liveness signal both endpoints share: the local Connector
-	// accepted a connection, or the Web API answered at all (even to reject a key).
+	// Reachable is the liveness signal both endpoints share: something at the base
+	// URL answered over HTTP — locally the connector ping got a response, on the
+	// Web API any response (even one rejecting the key).
 	Reachable bool
 
 	// Local endpoint only.
 	//
-	// ZoteroRunning is true when the Connector HTTP server accepted a connection
-	// (Zotero 7+ is running). ZoteroVersion is its reported version.
-	// LocalAPIEnabled is true when the Local API serves protected routes rather
-	// than 403 "Local API is not enabled".
+	// ZoteroRunning is true when the ping was answered by Zotero itself: the
+	// response carries X-Zotero-Version, which Zotero 7+ puts on every response.
+	// Unresponsive is true when something accepted the connection but sent no
+	// answer: it timed out or hung up. With neither set and Reachable false,
+	// nothing accepted a connection at all. ZoteroVersion is Zotero's reported
+	// version. LocalAPIEnabled is true when the Local API serves protected routes
+	// rather than 403 "Local API is not enabled".
 	ZoteroRunning   bool
+	Unresponsive    bool
 	ZoteroVersion   string
 	LocalAPIEnabled bool
 	// ServerID is the Zotero-Server-ID header the Local API returns on every
@@ -76,16 +82,23 @@ func (c *Client) CheckHealth(ctx context.Context) Health {
 func (c *Client) checkLocal(ctx context.Context) Health {
 	h := Health{Endpoint: c.profile}
 
-	// Liveness + version. The connector ping is never gated by any pref, so a
-	// refused connection is the authoritative "Zotero is not running" signal.
+	// Liveness + version. The connector ping is never gated by any pref. Its
+	// failure is sorted the way every other request is: only a failed dial means
+	// nothing is listening; anything else means something is, and did not answer.
 	resp, err := c.get(ctx, "/connector/ping")
 	if err != nil {
+		h.Unresponsive = !errors.Is(classifyTransport(ctx, err), ErrZoteroDown)
 		return h
 	}
-	h.ZoteroRunning = true
 	h.Reachable = true
 	h.ZoteroVersion = resp.Header.Get("X-Zotero-Version")
 	resp.Body.Close()
+	if h.ZoteroVersion == "" {
+		// Something answered, but not as Zotero: Zotero puts X-Zotero-Version on
+		// every response it sends, whatever the status.
+		return h
+	}
+	h.ZoteroRunning = true
 
 	// Local API enabled? A protected route 403s when httpServer.localAPI is off.
 	resp, err = c.get(ctx, "/api/users/0/items?limit=1")
@@ -102,9 +115,6 @@ func (c *Client) checkLocal(ctx context.Context) Health {
 		h.ServerID = resp.Header.Get("Zotero-Server-ID")
 	case http.StatusForbidden:
 		h.LocalAPIEnabled = false
-	}
-	if h.ZoteroVersion == "" {
-		h.ZoteroVersion = resp.Header.Get("X-Zotero-Version")
 	}
 	return h
 }

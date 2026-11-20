@@ -8,7 +8,7 @@ the heibench table; zot uses the subset that applies to it.
 |---|---|---|
 | `0` | Done | The read returned, the write landed, `doctor` reports ready |
 | `1` | Refused or failed | An object that does not exist; a write Zotero rejected; a batch, import or copy that came back `partial` or `failed`; Deny clicked in Zotero's authorize prompt; a write lease that does not cover this library or operation; the library changed since the write was prepared; invalid item JSON |
-| `4` | Environment | Zotero not running or unreachable, or the connection dropped; the Local API turned off; a Zotero build with no write API; a missing or rejected key (`--web` without `ZOTGO_API_KEY`, a rejected API key or local key, no active `zot grant` lease or an expired one); Web API rate limiting; `doctor` reporting not ready |
+| `4` | Environment | Zotero not running or unreachable, not answering, or the connection dropped; the Local API turned off; a Zotero build with no write API; a missing or rejected key (`--web` without `ZOTGO_API_KEY`, a rejected API key or local key, no active `zot grant` lease or an expired one); Web API rate limiting; `doctor` reporting not ready |
 | `64` | Usage | An unknown command, subcommand or flag; a missing, malformed or contradictory argument (`--json` with `--jsonl`, `--to` with `--to-top`); `--raw` on a command with no raw response; a write under `--web`; a machine-mode write without `--yes`; `zot grant` outside a terminal |
 
 The line between `1` and `64`: `64` means the command line itself is wrong and

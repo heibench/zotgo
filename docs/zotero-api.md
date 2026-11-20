@@ -32,7 +32,14 @@ apply. Served by `server_localAPI.js`.
   `403 text/plain "Local API is not enabled"`. zotgo must detect this exact
   case and tell the user how to enable it (Settings → Advanced → "Allow other
   applications on this computer to communicate with Zotero" + Local API).
-- Connection refused → Zotero not running.
+- Liveness is `GET /connector/ping`, never gated by a pref. Zotero answers `200`
+  and puts `X-Zotero-Version` on every response it sends. So:
+  - the connection is refused → nothing is listening at that address: Zotero is
+    not running, serves another port (`extensions.zotero.httpServer.port`), or
+    the client is in another network namespace (a container, WSL2);
+  - the connection is accepted but no response comes (timeout, hang-up) →
+    something is listening and not answering, which says nothing either way;
+  - a response without `X-Zotero-Version` → not Zotero, whatever its status.
 
 ### Response envelope
 

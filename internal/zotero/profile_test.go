@@ -98,10 +98,10 @@ func TestCapabilities_ZoteroNotRunning(t *testing.T) {
 			t.Errorf("%q supported while Zotero is down", c.Name)
 		}
 	}
-	if r := capByName(t, h, CapabilityRead).Reason; !strings.Contains(r, "not running") {
+	if r := capByName(t, h, CapabilityRead).Reason; r != "nothing accepted a connection" {
 		t.Errorf("read reason = %q", r)
 	}
-	if r := capByName(t, h, CapabilityConnectorIngest).Reason; !strings.Contains(r, "not running") {
+	if r := capByName(t, h, CapabilityConnectorIngest).Reason; r != "nothing accepted a connection" {
 		t.Errorf("connector reason = %q", r)
 	}
 }

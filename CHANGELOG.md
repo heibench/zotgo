@@ -23,6 +23,24 @@ Planned and outstanding work is tracked in the
   write that comes back `partial` or `failed`, still exits `1`. A mistyped
   flag no longer prints the full help text after the error.
 
+### Fixed
+
+- `zot doctor` says what its ping found instead of guessing (#151). It used to
+  report "Zotero not running" for any failed ping and "Zotero running" for any
+  HTTP answer. It now tells three cases apart. If nothing accepted a
+  connection, it lists the causes in order: Zotero not running, Zotero on
+  another port, or `zot` in a container or other network namespace where
+  `localhost` is not Zotero's machine. If something accepted the connection and
+  never answered, it says so. If a server answered without Zotero's
+  `X-Zotero-Version` header, it says something other than Zotero is answering;
+  `zot --json doctor` then reports `zoteroRunning: false` where it used to say
+  `true`. All three still exit `4`.
+- A request that times out (something accepted the connection and never
+  answered) is now an environment fault, exiting `4` with the "lost the
+  connection" message, rather than exiting `1` with Go's raw "context deadline
+  exceeded". zotgo had treated its own five-second timeout as if the caller had
+  cancelled.
+
 ## [1.0.0-rc.2] - 2026-11-15
 
 The second release candidate, and the first from heibench/zotgo. It adds
