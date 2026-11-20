@@ -632,7 +632,7 @@ func TestDoctorHumanCapabilitiesWhenDown(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected a non-zero exit")
 	}
-	for _, want := range []string{"Zotero not running", "Capabilities:", "Start the Zotero"} {
+	for _, want := range []string{"Nothing accepted a connection", "Capabilities:", "Start the desktop app"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
 		}

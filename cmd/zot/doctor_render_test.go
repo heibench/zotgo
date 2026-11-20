@@ -41,6 +41,8 @@ func TestRenderHealth_NoTrailingWhitespace(t *testing.T) {
 		{Endpoint: zotero.LocalProfile("http://x"), ZoteroRunning: true, LocalAPIEnabled: true},
 		{Endpoint: zotero.LocalProfile("http://x"), ZoteroRunning: true},
 		{Endpoint: zotero.LocalProfile("http://x")},
+		{Endpoint: zotero.LocalProfile("http://x"), Unresponsive: true},
+		{Endpoint: zotero.LocalProfile("http://x"), Reachable: true},
 		{Endpoint: zotero.WebProfile("https://api.zotero.org"), Reachable: true, KeyValid: true, WebUserID: 12345},
 		{Endpoint: zotero.WebProfile("https://api.zotero.org"), Reachable: true},
 		{Endpoint: zotero.WebProfile("https://api.zotero.org")},
@@ -111,8 +113,31 @@ func TestRenderHealth_NamesTheEndpoint(t *testing.T) {
 // The actionable fix must survive the capability section.
 func TestRenderHealth_KeepsActionableGuidance(t *testing.T) {
 	down := renderToString(zotero.Health{Endpoint: zotero.LocalProfile("http://x")})
-	if !strings.Contains(down, "Start the Zotero 7+ desktop app") {
-		t.Errorf("missing start guidance:\n%s", down)
+	for _, want := range []string{"Nothing accepted a connection at http://x", "Start the desktop app", "another network namespace"} {
+		if !strings.Contains(down, want) {
+			t.Errorf("refused: missing %q:\n%s", want, down)
+		}
+	}
+
+	silent := renderToString(zotero.Health{Endpoint: zotero.LocalProfile("http://x"), Unresponsive: true})
+	if !strings.Contains(silent, "Something is listening at http://x but did not answer") {
+		t.Errorf("unresponsive: missing status line:\n%s", silent)
+	}
+
+	stranger := renderToString(zotero.Health{Endpoint: zotero.LocalProfile("http://x"), Reachable: true})
+	if !strings.Contains(stranger, "Something other than Zotero is answering at http://x") {
+		t.Errorf("not Zotero: missing status line:\n%s", stranger)
+	}
+
+	// None of the three may claim Zotero's state: only the refused case even
+	// suggests starting it, and none says it is running.
+	for name, out := range map[string]string{"refused": down, "unresponsive": silent, "not Zotero": stranger} {
+		if strings.Contains(out, "Zotero running") || strings.Contains(out, "Local API disabled") {
+			t.Errorf("%s: reports Zotero's state it never observed:\n%s", name, out)
+		}
+	}
+	if strings.Contains(silent, "Start the desktop app") || strings.Contains(stranger, "Start the desktop app") {
+		t.Errorf("start-Zotero advice where something is already listening")
 	}
 
 	off := renderToString(zotero.Health{Endpoint: zotero.LocalProfile("http://x"), ZoteroRunning: true})

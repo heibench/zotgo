@@ -32,8 +32,16 @@ func renderHealth(w io.Writer, h zotero.Health, libraries []zotero.LibraryFiles)
 }
 
 func renderLocalStatus(w io.Writer, h zotero.Health) {
-	if !h.ZoteroRunning {
-		fmt.Fprintf(w, "  %s Zotero not running\n", cross)
+	switch {
+	case h.ZoteroRunning:
+	case h.Reachable:
+		fmt.Fprintf(w, "  %s Something other than Zotero is answering at %s\n", cross, h.Endpoint.BaseURL)
+		return
+	case h.Unresponsive:
+		fmt.Fprintf(w, "  %s Something is listening at %s but did not answer\n", cross, h.Endpoint.BaseURL)
+		return
+	default:
+		fmt.Fprintf(w, "  %s Nothing accepted a connection at %s\n", cross, h.Endpoint.BaseURL)
 		return
 	}
 	fmt.Fprintf(w, "  %s Zotero running%s\n", check, versionSuffix(h.ZoteroVersion))
@@ -46,8 +54,21 @@ func renderLocalStatus(w io.Writer, h zotero.Health) {
 
 func renderLocalGuidance(w io.Writer, h zotero.Health) {
 	switch {
+	case h.Reachable && !h.ZoteroRunning:
+		fmt.Fprint(w, "\nA server answered there, but not as Zotero: Zotero marks every response with\n")
+		fmt.Fprint(w, "X-Zotero-Version, and this one had none. Another program has the port, or\n")
+		fmt.Fprint(w, "--url / ZOTGO_BASE_URL points somewhere else.\n")
+	case h.Unresponsive:
+		fmt.Fprint(w, "\nSomething accepted the connection but sent no answer. Zotero may still be\n")
+		fmt.Fprint(w, "starting or busy; re-run `zot doctor`. If it persists, another program may hold\n")
+		fmt.Fprint(w, "the port.\n")
 	case !h.ZoteroRunning:
-		fmt.Fprint(w, "\nStart the Zotero 7+ desktop app, then re-run `zot doctor`.\n")
+		fmt.Fprint(w, "\nIn order of likelihood:\n")
+		fmt.Fprint(w, "  1. Zotero 7+ is not running. Start the desktop app, then re-run `zot doctor`.\n")
+		fmt.Fprint(w, "  2. Zotero serves a different port (extensions.zotero.httpServer.port,\n")
+		fmt.Fprint(w, "     23119 by default). Point --url or ZOTGO_BASE_URL at it.\n")
+		fmt.Fprint(w, "  3. zot runs where localhost is not Zotero's machine: a container, WSL2, or\n")
+		fmt.Fprint(w, "     another network namespace. Point --url at an address that reaches Zotero.\n")
 		fmt.Fprint(w, "zotgo talks to a running Zotero over HTTP; it never reads your database directly.\n")
 	case !h.LocalAPIEnabled:
 		fmt.Fprint(w, "\nzotgo reads your library through Zotero's Local API, which is off by default.\n")

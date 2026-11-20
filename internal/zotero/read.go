@@ -299,7 +299,7 @@ func (c *Client) do(ctx context.Context, path string, values url.Values) ([]byte
 	for attempt := 0; ; attempt++ {
 		resp, err := c.get(ctx, path)
 		if err != nil {
-			return nil, Page{}, classifyTransport(err)
+			return nil, Page{}, classifyTransport(ctx, err)
 		}
 		c.captureServerID(resp.Header)
 		page := pageFromHeader(resp.Header)
@@ -351,13 +351,15 @@ func retryAfter(h http.Header) time.Duration {
 
 // classifyTransport sorts a failed round-trip into the error taxonomy.
 //
-// Cancellation and deadlines are returned unwrapped by any sentinel: they are
-// the caller's own doing, and callers must be able to errors.Is them. A refused
-// dial is the only signal that authoritatively means Zotero is not listening.
-// Anything else broke after a connection existed, so it is a transport fault
-// rather than evidence about whether Zotero is running.
-func classifyTransport(err error) error {
-	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+// The caller's own cancellation or deadline (ctx is done) is returned unwrapped
+// by any sentinel: it is the caller's doing, and callers must be able to
+// errors.Is it. A failed dial means nothing accepted the connection, the only
+// signal that authoritatively means Zotero is not listening there. Anything
+// else, including the client's own timeout while ctx is still live, broke after
+// a connection existed, so it is a transport fault rather than evidence about
+// whether Zotero is running.
+func classifyTransport(ctx context.Context, err error) error {
+	if ctx.Err() != nil && (errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)) {
 		return err
 	}
 	var opErr *net.OpError

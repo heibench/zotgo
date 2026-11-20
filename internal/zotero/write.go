@@ -93,7 +93,7 @@ func (c *Client) writeRequest(ctx context.Context, method, path string, opts wri
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return 0, nil, classifyTransport(err)
+		return 0, nil, classifyTransport(ctx, err)
 	}
 	defer resp.Body.Close()
 	c.captureServerID(resp.Header)

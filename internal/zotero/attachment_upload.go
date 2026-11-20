@@ -142,7 +142,7 @@ func (c *Client) UploadAuthorizedAttachment(ctx context.Context, authorization A
 	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return classifyTransport(err)
+		return classifyTransport(ctx, err)
 	}
 	defer resp.Body.Close()
 	responseBody, readErr := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
@@ -218,7 +218,7 @@ func (c *Client) attachmentFileFormRequest(ctx context.Context, library LibraryR
 	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return 0, nil, classifyTransport(err)
+		return 0, nil, classifyTransport(ctx, err)
 	}
 	defer resp.Body.Close()
 	c.captureServerID(resp.Header)
