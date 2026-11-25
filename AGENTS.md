@@ -2,7 +2,7 @@
 
 Canonical working agreement for humans and AI agents contributing to this
 repository. This is the source of truth for how to build, test, and change the
-project. Tool-specific files (for example the root `CLAUDE.md`) point here.
+project.
 
 ## What this project is
 
